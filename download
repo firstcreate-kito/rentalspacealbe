@@ -1,0 +1,19 @@
+# Claude Code のセッションローカル設定
+.claude/settings.local.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*~
+.vscode/
+.idea/
+
+# 一時ファイル・画像変換の中間生成物
+# （マスター画像は残す。WebPへのリサイズ中間物のみ無視）
+*.log
+*.tmp
+lp/assets/img/*-tmp.*
+lp/assets/img/sakae-image-01-*.png
+
+# 依存（原則不要だが念のため）
+node_modules/
