@@ -1,24 +1,38 @@
+# GitHub にプッシュ（ファイル更新）すると、ConoHa WING の
+# space-albe.com/lp/ へ自動でアップロードするワークフロー。
+#
+# 事前準備：リポジトリの Settings > Secrets and variables > Actions で
+# 次の3つを登録してください（値は ConoHa の FTP 情報）。
+#   FTP_SERVER    … www257.conoha.ne.jp
+#   FTP_USERNAME  … github@space-albe.com
+#   FTP_PASSWORD  … （FTPアカウントのパスワード）
+
 name: Deploy to ConoHa WING
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [ main ]     # main ブランチが更新されたら実行
+  workflow_dispatch:        # 手動実行も可能
+
+# 連続更新でも反映が競合しないよう、実行を1本ずつ順番待ちにする
+concurrency:
+  group: deploy-conoha
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: リポジトリを取得
         uses: actions/checkout@v4
 
-      - name: Deploy via FTPS
+      - name: FTPS で ConoHa WING へアップロード
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
+          protocol: ftps          # 暗号化通信。失敗する場合は ftp に変更
           port: 21
           server-dir: ./
           local-dir: ./
