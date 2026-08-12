@@ -267,6 +267,7 @@ ul { list-style: none; padding: 0; }
   overflow: hidden; background: var(--c-bg-alt);
 }
 .map-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.map-note { margin: 0 0 .6em; font-size: .82rem; color: var(--c-ink-soft); }
 
 /* ---- 詳細セクションの見出し＋識別用サムネイル（見出し左に小さめ配置） ---- */
 .detail-head { display: flex; align-items: center; gap: 20px; margin-bottom: 1.6em; }
