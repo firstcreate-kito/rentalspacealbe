@@ -1,0 +1,7 @@
+# /lp/ 配下のHTMLはキャッシュせず常に最新を配信する
+# （CSS/JS/画像はファイル名やバージョン付与でキャッシュ制御するため対象外）
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
