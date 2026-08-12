@@ -254,6 +254,43 @@ ul { list-style: none; padding: 0; }
 .faq-item[open] summary::after { content: "－"; }
 .faq-answer { padding: 0 0 18px; color: var(--c-ink-soft); font-size: .95rem; }
 
+/* ---- ブログ（お知らせ） ---- */
+.crumb { font-size: .8rem; color: var(--c-ink-soft); padding-top: 24px; }
+.crumb a { text-decoration: none; }
+.page-head { padding: 20px 0 8px; }
+.page-title { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; letter-spacing: .02em; }
+.page-lead { color: var(--c-ink-soft); font-size: .95rem; margin-top: .4em; }
+.post-list { list-style: none; padding: 0; margin: 32px 0 64px; display: flex; flex-direction: column; gap: 20px; }
+.post-card { display: grid; grid-template-columns: 180px 1fr; gap: 20px; border: 1px solid var(--c-line); border-radius: var(--radius); overflow: hidden; background: #fff; text-decoration: none; color: inherit; }
+.post-card:hover { border-color: var(--c-ink); }
+.post-thumb { aspect-ratio: 4 / 3; background: repeating-linear-gradient(45deg, #ededea 0 12px, #f4f3f1 12px 24px); display: grid; place-items: center; color: #9a9a9a; font-size: .72rem; text-align: center; }
+.post-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.post-card-body { padding: 18px 20px 18px 0; display: flex; flex-direction: column; gap: .4em; }
+.post-date { font-size: .78rem; color: var(--c-ink-soft); letter-spacing: .04em; }
+.post-card-title { font-size: 1.1rem; font-weight: 700; line-height: 1.5; }
+.post-excerpt { font-size: .9rem; color: var(--c-ink-soft); }
+.post-more { font-size: .82rem; font-weight: 700; margin-top: .2em; }
+.post-more::after { content: " →"; }
+.post-article { padding: 8px 0 64px; max-width: 760px; }
+.post-header { border-bottom: 1px solid var(--c-line); padding-bottom: 20px; margin-bottom: 24px; }
+.post-title { font-size: clamp(1.5rem, 4.5vw, 2.1rem); font-weight: 800; line-height: 1.4; margin-top: .3em; }
+.post-figure { margin: 0 0 28px; border: 1px solid var(--c-line); border-radius: var(--radius); overflow: hidden; }
+.post-figure img { width: 100%; height: auto; display: block; }
+.post-figure .ph { aspect-ratio: 16 / 9; background: repeating-linear-gradient(45deg, #ededea 0 12px, #f4f3f1 12px 24px); display: grid; place-items: center; color: #9a9a9a; font-size: .8rem; text-align: center; }
+.post-body > * + * { margin-top: 1.2em; }
+.post-body h2 { font-size: 1.25rem; font-weight: 700; margin-top: 1.8em; }
+.post-body p { color: #333; }
+.post-body ul { padding-left: 1.2em; color: #333; }
+.post-body li { list-style: disc; margin-top: .3em; }
+.back-link { display: inline-block; margin-bottom: 24px; font-size: .85rem; font-weight: 600; text-decoration: none; }
+.back-link::before { content: "← "; }
+.post-cta { margin-top: 40px; background: var(--c-bg-alt); border-radius: var(--radius); padding: 28px; text-align: center; }
+.post-cta p { margin-bottom: 1em; font-weight: 700; }
+@media (max-width: 600px) {
+  .post-card { grid-template-columns: 110px 1fr; gap: 14px; }
+  .post-card-body { padding: 14px 14px 14px 0; }
+}
+
 /* ---- お問い合わせ ---- */
 .contact { text-align: center; background: var(--c-bg-alt); }
 .contact .section-lead { margin-inline: auto; }
