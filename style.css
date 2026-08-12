@@ -140,9 +140,11 @@ ul { list-style: none; padding: 0; }
   display: flex; flex-direction: column; background: #fff;
 }
 .venue-card-media {
+  position: relative; overflow: hidden;
   aspect-ratio: 4 / 3; display: grid; place-items: center; text-align: center;
   background: var(--c-bg-alt); color: var(--c-ink-soft); font-size: .85rem;
 }
+.venue-card-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .venue-card-body { padding: 24px; display: flex; flex-direction: column; gap: .6em; flex: 1; }
 .venue-tag {
   align-self: flex-start; font-size: .75rem; letter-spacing: .06em;
