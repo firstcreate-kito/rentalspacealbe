@@ -52,6 +52,25 @@
     });
   }, { passive: true });
 
+  // 360°内覧（マターポート）— サムネイルをクリックでiframeを遅延生成して展開
+  //   初期表示ではiframeを読み込まず、LCP/品質スコアを守る
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('.mp-thumb');
+    if (!btn) return;
+    var url = btn.getAttribute('data-mp');
+    if (!url) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'mp-embed';
+    var iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.title = '360°バーチャル内覧';
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('allow', 'xr-spatial-tracking; fullscreen');
+    iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+    wrap.appendChild(iframe);
+    btn.replaceWith(wrap);
+  });
+
   // 料金セクション到達（IntersectionObserver・1回だけ）
   var pricing = document.getElementById('pricing');
   if (pricing && 'IntersectionObserver' in window) {
