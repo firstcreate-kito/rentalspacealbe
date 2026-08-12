@@ -195,7 +195,8 @@ ul { list-style: none; padding: 0; }
 .floorplan-media img { display: block; width: 100%; height: auto; }
 .floorplan-media--pending {
   aspect-ratio: 16 / 9; display: grid; place-items: center;
-  color: var(--c-ink-soft); font-size: .9rem; background: var(--c-bg-alt);
+  color: var(--c-ink-soft); font-size: 1.35rem; font-weight: 700;
+  letter-spacing: .04em; background: var(--c-bg-alt);
 }
 .btn-download { gap: .5em; }
 
