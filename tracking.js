@@ -50,6 +50,16 @@
       venue: el.getAttribute('data-venue') || 'unknown',
       link_url: el.getAttribute('href') || ''
     });
+
+    // Google広告コンバージョン（LINEクリック）— 既存アカウントの設定に合わせる
+    //   LINEボタンは別タブで開くため、遷移を止めずにコンバージョンを送信する
+    if (key === 'line') {
+      track('conversion', {
+        send_to: 'AW-17762210452/m2YsCL_wm6IcEJSl15VC',
+        value: 1.0,
+        currency: 'JPY'
+      });
+    }
   }, { passive: true });
 
   // 360°内覧（マターポート）— サムネイルをクリックでiframeを遅延生成して展開

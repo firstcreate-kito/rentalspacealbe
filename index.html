@@ -26,16 +26,15 @@
   <link rel="preload" as="image" href="./albe-hall-01.webp" fetchpriority="high">
   <link rel="preload" as="image" href="./albe-sakae-01.webp" fetchpriority="high">
 
-  <!-- ===== 計測タグ（GA4） ===== -->
+  <!-- ===== 計測タグ（GA4 + Google広告） ===== -->
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XYZM0LL6BB"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-XYZM0LL6BB');     // GA4 測定ID
-    // Google広告 コンバージョンID（取得後に有効化）
-    // gtag('config', 'AW-XXXXXXXXX');
+    gtag('config', 'G-XYZM0LL6BB');       // GA4 測定ID
+    gtag('config', 'AW-17762210452');     // Google広告 コンバージョンID
   </script>
 
   <link rel="stylesheet" href="./style.css?v=11">
@@ -512,6 +511,6 @@
     <a class="btn btn-line" href="https://page.line.me/565eerld?openQrModal=true" target="_blank" rel="noopener" data-track="line" data-venue="sticky">LINE</a>
   </div>
 
-  <script src="./tracking.js?v=9" defer></script>
+  <script src="./tracking.js?v=12" defer></script>
 </body>
 </html>
