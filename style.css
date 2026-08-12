@@ -115,7 +115,7 @@ ul { list-style: none; padding: 0; }
 }
 /* PC：左右2分割。マウスオーバーした側が80%に広がる（他方は20%）。スマホは上下の縦積み */
 @media (min-width: 768px) {
-  .hero-media--split { flex-direction: row; height: clamp(360px, 32vw, 540px); }
+  .hero-media--split { flex-direction: row; height: clamp(430px, 38vw, 650px); }
   .hero-half { aspect-ratio: auto; flex: 1 1 0; min-width: 0; transition: flex-grow .45s ease; }
   .hero-half:hover { flex-grow: 4; }
 }
