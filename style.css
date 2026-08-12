@@ -86,6 +86,12 @@ ul { list-style: none; padding: 0; }
 }
 .header-inner { display: flex; align-items: center; justify-content: space-between; min-height: 60px; }
 .brand { font-weight: 700; letter-spacing: .04em; }
+.header-nav { display: flex; align-items: center; gap: 14px; }
+.header-official {
+  text-decoration: none; font-size: .82rem; font-weight: 600; color: var(--c-ink);
+  border: 1px solid var(--c-line); border-radius: 999px; padding: 6px 14px; white-space: nowrap;
+}
+.header-official:hover { border-color: var(--c-ink); }
 .header-tel { text-decoration: none; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
 .header-tel-label { font-size: .7rem; color: var(--c-ink-soft); }
 .header-tel-num { font-weight: 700; font-size: 1.05rem; }
@@ -93,11 +99,21 @@ ul { list-style: none; padding: 0; }
 /* ---- ファーストビュー ---- */
 .hero { position: relative; background: var(--c-bg-alt); }
 .hero-media { position: relative; }
-.hero-media-placeholder {
-  display: grid; place-items: center; text-align: center; color: var(--c-ink-soft);
-  aspect-ratio: 16 / 7; background:
-    repeating-linear-gradient(45deg, #ededea 0 12px, #f4f3f1 12px 24px);
-  font-size: .9rem;
+/* メインビジュアル：左右2分割（左＝アルベホール名古屋／右＝栄） */
+.hero-media--split { display: grid; grid-template-columns: 1fr; gap: 2px; }
+.hero-half {
+  position: relative; margin: 0; overflow: hidden; aspect-ratio: 16 / 9;
+  background: repeating-linear-gradient(45deg, #ededea 0 12px, #f4f3f1 12px 24px);
+}
+.hero-half img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-half-label {
+  position: absolute; left: 12px; bottom: 12px; z-index: 1;
+  background: rgba(26,26,26,.78); color: #fff; font-size: .8rem; font-weight: 700;
+  padding: 6px 12px; border-radius: 2px;
+}
+/* PCでは横長バンドにして上下2段の高さを抑える */
+@media (min-width: 768px) {
+  .hero-half { aspect-ratio: 28 / 9; }
 }
 .image-note {
   position: absolute; right: 12px; bottom: 12px;
@@ -160,22 +176,83 @@ ul { list-style: none; padding: 0; }
 .link-item::before { content: "›"; color: var(--c-ink-soft); }
 .link-item:hover { border-color: var(--c-ink); }
 .detail-note-box { background: #fff; border: 1px solid var(--c-line); border-radius: var(--radius); padding: 16px; }
+
+/* ---- 図面 ---- */
+.floorplan { margin-top: 2em; }
+.floorplan-title { font-size: 1.1rem; font-weight: 700; margin-bottom: .8em; }
+.floorplan-media {
+  margin: 0 0 1em; border: 1px solid var(--c-line); border-radius: var(--radius);
+  overflow: hidden; background: #fff;
+}
+.floorplan-media img { display: block; width: 100%; height: auto; }
+.floorplan-media--pending {
+  aspect-ratio: 16 / 9; display: grid; place-items: center;
+  color: var(--c-ink-soft); font-size: .9rem; background: var(--c-bg-alt);
+}
+.btn-download { gap: .5em; }
 .detail-note-box .image-note { position: static; background: none; color: var(--c-ink); font-weight: 700; font-size: .85rem; padding: 0; margin-bottom: .5em; }
 .detail-cta { margin-top: 2em; }
 
-/* ---- 実績 ---- */
-.trust { background: var(--c-ink); color: #fff; text-align: center; }
-.trust .section-title { color: #fff; }
-.trust-stats { display: flex; justify-content: center; gap: clamp(32px, 8vw, 80px); flex-wrap: wrap; margin-bottom: 1.5em; }
-.trust-stats li { display: flex; flex-direction: column; }
-.trust-stats strong { font-size: clamp(2.4rem, 7vw, 3.6rem); font-weight: 800; line-height: 1; }
-.trust-stats span { font-size: .85rem; color: #cfcfcf; margin-top: .5em; }
-.trust-partners { font-size: .85rem; color: #cfcfcf; max-width: 46em; margin-inline: auto; }
+/* ---- 選ばれる理由 ---- */
+.reasons { background: var(--c-bg-alt); }
+.reason-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); }
+.reason-card {
+  background: #fff; border: 1px solid var(--c-line); border-radius: var(--radius);
+  padding: 24px; display: flex; flex-direction: column; gap: .6em;
+}
+.reason-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 999px;
+  background: var(--c-bg-alt); color: var(--c-ink); flex: none;
+}
+.reason-icon svg { width: 22px; height: 22px; }
+.reason-card h3 { font-size: 1.05rem; font-weight: 700; line-height: 1.5; }
+.reason-card p { color: var(--c-ink-soft); font-size: .9rem; }
+@media (max-width: 900px) { .reason-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .reason-grid { grid-template-columns: 1fr; } }
 
 /* ---- アクセス ---- */
 .access-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); }
 .access-item h3 { font-size: 1.1rem; margin-bottom: .4em; }
 .access-item p { color: var(--c-ink-soft); font-size: .95rem; margin-bottom: .6em; }
+.map-embed {
+  position: relative; width: 100%; aspect-ratio: 16 / 10;
+  margin: .8em 0; border: 1px solid var(--c-line); border-radius: var(--radius);
+  overflow: hidden; background: var(--c-bg-alt);
+}
+.map-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* ---- 詳細セクションの見出し＋識別用サムネイル（見出し左に小さめ配置） ---- */
+.detail-head { display: flex; align-items: center; gap: 20px; margin-bottom: 1.6em; }
+.detail-head-text { min-width: 0; }
+.detail-head .section-title { margin-bottom: 0; }
+.detail-media {
+  position: relative; width: 180px; flex: none; aspect-ratio: 4 / 3;
+  margin: 0; overflow: hidden;
+  border: 1px solid var(--c-line); border-radius: var(--radius); background: var(--c-bg-alt);
+}
+.detail-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.detail-media .image-note { font-size: .62rem; padding: 2px 7px; right: 6px; bottom: 6px; }
+@media (max-width: 600px) {
+  .detail-head { gap: 14px; }
+  .detail-media { width: 120px; }
+}
+
+/* ---- よくある質問 ---- */
+.faq { background: var(--c-bg); }
+.faq-list { max-width: 760px; margin-inline: auto; border-top: 1px solid var(--c-line); }
+.faq-item { border-bottom: 1px solid var(--c-line); }
+.faq-item summary {
+  cursor: pointer; list-style: none; padding: 18px 40px 18px 0; position: relative;
+  font-weight: 700; font-size: 1rem; line-height: 1.5;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: "＋"; position: absolute; right: 4px; top: 16px;
+  font-weight: 400; color: var(--c-ink-soft);
+}
+.faq-item[open] summary::after { content: "－"; }
+.faq-answer { padding: 0 0 18px; color: var(--c-ink-soft); font-size: .95rem; }
 
 /* ---- お問い合わせ ---- */
 .contact { text-align: center; background: var(--c-bg-alt); }
@@ -187,6 +264,9 @@ ul { list-style: none; padding: 0; }
 .footer-brand { font-weight: 700; letter-spacing: .04em; }
 .footer-note { font-size: .82rem; color: #cfcfcf; margin-top: .4em; }
 .footer-tagline { font-size: .9rem; color: #cfcfcf; margin-top: 1em; }
+.footer-links { margin-top: 1.2em; }
+.footer-links a { color: #fff; font-size: .9rem; text-decoration: underline; text-underline-offset: 3px; }
+.footer-links a:hover { opacity: .8; }
 
 /* ---- スマホ追従CTA ---- */
 .sticky-cta { display: none; }

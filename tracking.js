@@ -36,7 +36,8 @@
     tel:           { name: 'tel_click' },
     matterport:    { name: 'matterport_open' },
     floorplan_pdf: { name: 'floorplan_download' },
-    gallery:       { name: 'gallery_open' }
+    gallery:       { name: 'gallery_open' },
+    official_site: { name: 'official_site_click' }
   };
 
   document.addEventListener('click', function (ev) {
