@@ -20,8 +20,8 @@
 
   <!-- ===== LCP画像のプリロード（ファーストビューの2枚） ===== -->
   <!-- TODO: albe-hall-01 / sakae-01 を配置後にコメント解除（LCP改善）
-  <link rel="preload" as="image" href="./albe-hall-01.jpg" fetchpriority="high">
-  <link rel="preload" as="image" href="./sakae-01.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="./albe-hall-01.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="./albe-sakae-01.webp" fetchpriority="high">
   -->
 
   <!-- ===== 計測タグ（プレースホルダ・要ID差し替え） ===== -->
@@ -36,7 +36,7 @@
   </script>
   -->
 
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=2">
 
   <!-- ===== 構造化データ ===== -->
   <script type="application/ld+json">
@@ -46,7 +46,7 @@
     "@id": "https://space-albe.com/lp/#albe-hall",
     "name": "アルベホール名古屋",
     "url": "https://albe-hall.com",
-    "image": "https://space-albe.com/lp/albe-hall-01.jpg",
+    "image": "https://space-albe.com/lp/albe-hall-01.webp",
     "telephone": "+81-52-485-5975",
     "email": "rental@space-albe.com",
     "priceRange": "¥94,380〜¥141,570",
@@ -77,7 +77,7 @@
     "@id": "https://space-albe.com/lp/#sakae",
     "name": "アルベ イベントスペース栄（仮称）",
     "url": "https://space-albe.com/lp/#sakae",
-    "image": "https://space-albe.com/lp/sakae-01.jpg",
+    "image": "https://space-albe.com/lp/albe-sakae-01.webp",
     "telephone": "+81-52-485-5975",
     "email": "rental@space-albe.com",
     "priceRange": "¥90,000〜¥139,000",
@@ -151,11 +151,11 @@
       <div class="hero-media hero-media--split">
         <!-- 左：アルベホール名古屋（実写）／右：イベントスペース栄（イメージ）。LCP要素のため lazy は付けない -->
         <figure class="hero-half">
-          <img src="albe-hall-01.jpg" alt="アルベホール名古屋の空間。天井高4.5mの白い空間" fetchpriority="high">
+          <img src="albe-hall-01.webp" alt="アルベホール名古屋の空間。天井高4.5mの白い空間" fetchpriority="high">
           <figcaption class="hero-half-label">アルベホール名古屋</figcaption>
         </figure>
         <figure class="hero-half">
-          <img src="sakae-01.jpg" alt="（仮称）アルベ イベントスペース栄のイメージ。白壁と白木調の床の約200㎡のフラットな空間" fetchpriority="high">
+          <img src="albe-sakae-01.webp" alt="（仮称）アルベ イベントスペース栄のイメージ。白壁と白木調の床の約200㎡のフラットな空間" fetchpriority="high">
           <figcaption class="hero-half-label">イベントスペース栄（仮称）</figcaption>
           <p class="image-note">イメージ</p>
         </figure>
@@ -264,7 +264,7 @@
       <div class="container">
         <div class="detail-head">
           <figure class="detail-media">
-            <img src="albe-hall-01.jpg" alt="アルベホール名古屋の空間。コンクリート床・白壁・スケルトン天井" loading="lazy">
+            <img src="albe-hall-01.webp" alt="アルベホール名古屋の空間。コンクリート床・白壁・スケルトン天井" loading="lazy">
           </figure>
           <div class="detail-head-text">
             <p class="detail-eyebrow">高さで魅せる</p>
@@ -311,7 +311,7 @@
       <div class="container">
         <div class="detail-head">
           <figure class="detail-media">
-            <img src="sakae-01.jpg" alt="（仮称）アルベ イベントスペース栄のイメージ。白壁と白木調の床の約200㎡のフラットな空間" loading="lazy">
+            <img src="albe-sakae-01.webp" alt="（仮称）アルベ イベントスペース栄のイメージ。白壁と白木調の床の約200㎡のフラットな空間" loading="lazy">
             <p class="image-note">イメージ</p>
           </figure>
           <div class="detail-head-text">
