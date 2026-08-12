@@ -106,6 +106,8 @@ ul { list-style: none; padding: 0; }
   background: repeating-linear-gradient(45deg, #ededea 0 12px, #f4f3f1 12px 24px);
 }
 .hero-half img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; }
+/* 栄の画像は天井が広いので、トリミング位置を下げて空間（壁・床）を見せる */
+.hero-half--sakae img { object-position: center 68%; }
 .hero-half-label {
   position: absolute; left: 12px; bottom: 12px; z-index: 1; white-space: nowrap;
   background: rgba(26,26,26,.78); color: #fff; font-size: .8rem; font-weight: 700;
@@ -113,7 +115,7 @@ ul { list-style: none; padding: 0; }
 }
 /* PC：左右2分割。マウスオーバーした側が80%に広がる（他方は20%）。スマホは上下の縦積み */
 @media (min-width: 768px) {
-  .hero-media--split { flex-direction: row; height: clamp(340px, 30vw, 480px); }
+  .hero-media--split { flex-direction: row; height: clamp(360px, 32vw, 540px); }
   .hero-half { aspect-ratio: auto; flex: 1 1 0; min-width: 0; transition: flex-grow .45s ease; }
   .hero-half:hover { flex-grow: 4; }
 }
