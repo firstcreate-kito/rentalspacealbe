@@ -111,9 +111,9 @@ ul { list-style: none; padding: 0; }
   background: rgba(26,26,26,.78); color: #fff; font-size: .8rem; font-weight: 700;
   padding: 6px 12px; border-radius: 2px;
 }
-/* PCでは横長バンド。天井だけにならないよう高さは確保しつつ2段を成立させる */
+/* PCでは左右50/50に並べて縦の占有を抑える（スマホは上下の縦積みのまま） */
 @media (min-width: 768px) {
-  .hero-half { aspect-ratio: 21 / 9; }
+  .hero-media--split { grid-template-columns: 1fr 1fr; }
 }
 .image-note {
   position: absolute; right: 12px; bottom: 12px;
