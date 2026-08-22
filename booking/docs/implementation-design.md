@@ -356,6 +356,29 @@ GCal 実 API（モックで代替）、管理画面 UI、サイネージ UI、St
 - Secrets（`wrangler secret put`）：`GCAL_SA_KEY`、`SENDGRID_API_KEY`、`LINE_CHANNEL_TOKEN`、`STRIPE_SECRET`（Phase 4）、`SESSION_PEPPER`（ハッシュ用ペッパー）等。**値は本書・リポジトリに記載しない**。
 - 環境分離：`dev` / `production`（D1 データベースも分離）。
 
+### 12.1 メール配信（決定：SendGrid）
+
+到達率・運用安定を最優先する事業要件のため、**トランザクションメールは SendGrid（Twilio Inc.）**を採用（決定）。過去のメール不達の主因は、WordPress同居サーバ／通常Gmailからの送信でドメイン認証・IPレピュテーションが未整備だったことにあるため、予約系メールを専用配信基盤に分離する。
+
+必須セットアップ（到達率のため。ベンダー非依存で必須）：
+- **送信ドメイン認証**：`space-albe.com` に SendGrid の DKIM/SPF 用 CNAME を設定。送信は**専用サブドメイン**（例 `mail.space-albe.com`）にしてルートドメインの評判を保護。
+- **DMARC** レコードを発行（まず `p=none` で監視 → 整えば強化）。
+- 差出人は **`rental@space-albe.com`** で固定（`info@first-create.com` は使わない）。適切な Reply-To。
+- **Event Webhook** でバウンス/苦情を受信し `notification_log` に記録・自動抑制（抑制リスト反映）。
+- `integrations/mailer.ts` にアダプタIFを切り、Phase 1 はモック／dev は SendGrid サンドボックス、production で本送信。
+
+### 12.2 外部委託先一覧（プライバシーポリシー記載用）
+
+個人情報（氏名・メール・電話等）を移転・委託する事業者。**すべて海外事業者は「外国にある第三者への提供」欄に記載**。契約時点の登記上の正式名称を最終確認すること。
+
+| 用途 | 事業者名（記載名） | 国外移転 |
+|---|---|---|
+| インフラ・DB（Workers/D1） | Cloudflare, Inc. | 該当（米国） |
+| メール配信 | Twilio Inc.（SendGrid）※国内代理店経由なら株式会社構造計画研究所も併記 | 該当（米国） |
+| カレンダー同期・帳票生成 | Google LLC（Google Calendar / Apps Script） | 該当（米国） |
+| LINE 通知 | LINEヤフー株式会社 | 国内 |
+| 決済（Phase 4） | Stripe Payments Japan 株式会社 ／ Stripe, Inc. | 一部該当（米国） |
+
 ---
 
 ## 13. 要確認事項（着手前・実装中に確定）
@@ -379,6 +402,7 @@ GCal 実 API（モックで代替）、管理画面 UI、サイネージ UI、St
 - [ ] 祝日データの取得元（内閣府 CSV の取り込み手順）と毎年の更新運用。
 
 **D. 認証・文言・法務**
+- [x] メール配信事業者 = **SendGrid（Twilio Inc.）** に決定（§12.1）。プライバシーポリシーの委託先一覧は §12.2。→ 残：国内代理店経由か直契約か、送信サブドメイン名の確定、DMARC 運用ポリシー。
 - [ ] ブラックリスト拒否の定型文（仕様の「申し訳ございませんが、ご予約をお受けすることができません。」で確定か）。
 - [ ] 書類公開URLの有効範囲（無期限公開か、失効を設けるか）。
 - [ ] 顧客規約・キャンセルポリシーの初期値（`cancel_policies` の段階・料率）。
