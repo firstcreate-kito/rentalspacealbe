@@ -494,3 +494,11 @@ ul { list-style: none; padding: 0; }
   border-left: 3px solid var(--c-ink); padding-left: 14px; max-width: 46em;
 }
 .asoffice figcaption b { color: var(--c-ink); }
+
+/* ---- 常設の備品や設備：オプションの見出し ---- */
+.kit-sub {
+  font-size: 1.05rem; font-weight: 700;
+  margin: 2.2em 0 .9em; padding-top: 1.6em;
+  border-top: 1px solid var(--c-line);
+}
+.kit-list--opt { margin-bottom: 1.4em; }
