@@ -480,3 +480,17 @@ ul { list-style: none; padding: 0; }
   .spec-table--pairs th { white-space: normal; border-bottom: 0; }
   .spec-table--pairs td { border-top: 0; }
 }
+
+/* ---- 事務所として使うイメージ（AI生成画像。注記とセットで使う） ---- */
+.asoffice { margin: 0; }
+.asoffice-media {
+  position: relative; margin: 0 0 12px;
+  border: 1px solid var(--c-line); border-radius: var(--radius);
+  overflow: hidden; background: var(--c-bg-alt);
+}
+.asoffice-media img { display: block; width: 100%; height: auto; }
+.asoffice figcaption {
+  font-size: .85rem; color: var(--c-ink-soft); line-height: 1.7;
+  border-left: 3px solid var(--c-ink); padding-left: 14px; max-width: 46em;
+}
+.asoffice figcaption b { color: var(--c-ink); }
