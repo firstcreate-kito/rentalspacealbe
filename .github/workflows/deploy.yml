@@ -42,3 +42,4 @@ jobs:
             **/.github/**
             **/CLAUDE.md
             **/README.md
+            **/HANDOVER.md
