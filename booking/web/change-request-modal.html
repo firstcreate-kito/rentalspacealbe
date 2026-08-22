@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>予約変更リクエスト モーダル（プロトタイプ）</title>
+<!--
+  レンタルスペースALBE 予約システム / Phase 2 顧客UI プロトタイプ
+  マイページの「予約変更リクエスト」ボタン → モーダル。
+  モーダル内に「キャンセルポリシー」「変更ポリシー」をアコーディオンで表示。
+
+  実装方針（実装設計書 §15.10）:
+   - モーダル内アコーディオン（画面遷移なし・モーダル重ねなし）
+   - 素のHTML/CSS/JS（依存なし・軽量）
+   - アクセシビリティ: role=dialog / aria-modal / フォーカストラップ / ESC閉じ /
+     フォーカス復帰 / アコーディオンは button[aria-expanded] + region /
+     prefers-reduced-motion 尊重 / フォーカス可視化
+
+  注: これはフロント単体プロトタイプ。送信は API 未接続（ダミーの完了表示）。
+      キャンセル料率は確定値未提供のため「例（要確定）」表記。
+-->
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --ink-soft:#555;
+    --line:#e4e4e4;
+    --line-strong:#c9c9c9;
+    --bg:#ffffff;
+    --bg-soft:#f7f7f6;
+    --accent:#0f6f5c;        /* 単一アクセント（ALBE：白基調＋抑えたグリーン） */
+    --accent-ink:#0b5446;    /* アクセント濃色（hover等） */
+    --accent-weak:#e7f1ee;
+    --danger:#9a3412;
+    --radius:10px;
+    --shadow:0 10px 40px rgba(0,0,0,.18);
+    --focus:0 0 0 3px rgba(15,111,92,.35);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{
+    font-family: system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+    color:var(--ink);
+    background:var(--bg-soft);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- デモ用のページ枠（マイページ予約詳細の一部を模したもの）---- */
+  .demo-wrap{ max-width:720px; margin:0 auto; padding:40px 20px 80px; }
+  .demo-note{
+    font-size:13px; color:var(--ink-soft); background:#fffbe9;
+    border:1px solid #f0e4b8; border-radius:8px; padding:10px 14px; margin-bottom:28px;
+  }
+  .booking-card{
+    background:var(--bg); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px 22px 20px; box-shadow:0 1px 2px rgba(0,0,0,.03);
+  }
+  .booking-card h1{ font-size:18px; margin:0 0 4px; letter-spacing:.02em; }
+  .booking-card .num{ font-size:13px; color:var(--ink-soft); margin:0 0 16px; }
+  .kv{ display:grid; grid-template-columns:7em 1fr; gap:6px 12px; font-size:14px; margin:0 0 20px; }
+  .kv dt{ color:var(--ink-soft); }
+  .kv dd{ margin:0; }
+
+  .btn{
+    font:inherit; cursor:pointer; border-radius:8px; border:1px solid transparent;
+    padding:11px 18px; transition:background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .btn:focus-visible{ outline:none; box-shadow:var(--focus); }
+  .btn-primary{ background:var(--accent); color:#fff; }
+  .btn-primary:hover{ background:var(--accent-ink); }
+  .btn-outline{ background:#fff; color:var(--ink); border-color:var(--line-strong); }
+  .btn-outline:hover{ border-color:var(--ink); }
+  .btn-ghost{ background:transparent; color:var(--ink-soft); }
+  .btn-ghost:hover{ color:var(--ink); }
+
+  /* ---- モーダル ---- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(20,20,20,.5);
+    display:flex; align-items:flex-end; justify-content:center; padding:0;
+    opacity:0; visibility:hidden; transition:opacity .2s ease, visibility .2s ease; z-index:50;
+  }
+  @media (min-width:640px){ .overlay{ align-items:center; padding:24px; } }
+  .overlay.is-open{ opacity:1; visibility:visible; }
+
+  .modal{
+    background:var(--bg); width:100%; max-width:560px; max-height:92vh; overflow:auto;
+    border-radius:16px 16px 0 0; box-shadow:var(--shadow);
+    transform:translateY(16px); transition:transform .2s ease;
+  }
+  @media (min-width:640px){ .modal{ border-radius:16px; } }
+  .overlay.is-open .modal{ transform:translateY(0); }
+
+  .modal-head{
+    position:sticky; top:0; background:var(--bg); z-index:1;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    padding:20px 20px 12px; border-bottom:1px solid var(--line);
+  }
+  .modal-head h2{ font-size:17px; margin:0; letter-spacing:.02em; }
+  .modal-head p{ font-size:12.5px; color:var(--ink-soft); margin:4px 0 0; }
+  .modal-close{
+    flex:0 0 auto; width:36px; height:36px; border-radius:8px; border:1px solid var(--line);
+    background:#fff; cursor:pointer; font-size:18px; line-height:1; color:var(--ink-soft);
+  }
+  .modal-close:hover{ color:var(--ink); border-color:var(--line-strong); }
+  .modal-close:focus-visible{ outline:none; box-shadow:var(--focus); }
+
+  .modal-body{ padding:18px 20px 8px; }
+  .field{ margin:0 0 18px; }
+  .field > label, .field > .label{ display:block; font-size:13.5px; font-weight:600; margin:0 0 8px; }
+  .req{ color:var(--danger); font-weight:600; font-size:12px; margin-left:4px; }
+
+  .radios{ display:grid; gap:8px; }
+  .radio{
+    display:flex; align-items:center; gap:10px; padding:11px 12px; font-size:14px;
+    border:1px solid var(--line-strong); border-radius:8px; cursor:pointer;
+  }
+  .radio:hover{ border-color:var(--ink); }
+  .radio input{ accent-color:var(--accent); width:16px; height:16px; }
+  .radio:focus-within{ box-shadow:var(--focus); border-color:var(--accent); }
+
+  textarea{
+    width:100%; min-height:110px; resize:vertical; font:inherit; color:var(--ink);
+    border:1px solid var(--line-strong); border-radius:8px; padding:11px 12px; background:#fff;
+  }
+  textarea:focus-visible{ outline:none; box-shadow:var(--focus); border-color:var(--accent); }
+
+  /* ---- アコーディオン（モーダル内）---- */
+  .policies{ border:1px solid var(--line); border-radius:10px; overflow:hidden; margin:2px 0 18px; }
+  .accordion + .accordion{ border-top:1px solid var(--line); }
+  .accordion-trigger{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    background:var(--bg-soft); border:0; cursor:pointer; font:inherit; text-align:left;
+    padding:13px 14px; color:var(--ink); font-weight:600; font-size:14px;
+  }
+  .accordion-trigger:hover{ background:#f0f0ee; }
+  .accordion-trigger:focus-visible{ outline:none; box-shadow:var(--focus); }
+  .accordion-trigger .chev{ flex:0 0 auto; transition:transform .2s ease; color:var(--ink-soft); }
+  .accordion-trigger[aria-expanded="true"] .chev{ transform:rotate(180deg); }
+  .accordion-panel{
+    display:grid; grid-template-rows:0fr; transition:grid-template-rows .22s ease;
+    background:#fff;
+  }
+  .accordion-panel > .inner{ overflow:hidden; }
+  .accordion-panel.is-open{ grid-template-rows:1fr; }
+  .accordion-panel .inner-pad{ padding:6px 14px 16px; font-size:13.5px; color:var(--ink-soft); }
+  .accordion-panel h4{ font-size:13px; color:var(--ink); margin:12px 0 6px; }
+  .accordion-panel ul{ margin:6px 0 0; padding-left:1.15em; }
+  .accordion-panel li{ margin:3px 0; }
+
+  table.policy{ width:100%; border-collapse:collapse; margin:8px 0 2px; font-size:13px; }
+  table.policy th, table.policy td{ border:1px solid var(--line); padding:7px 9px; text-align:left; }
+  table.policy th{ background:var(--bg-soft); font-weight:600; color:var(--ink); }
+  .tag-example{
+    display:inline-block; font-size:11px; color:var(--accent-ink); background:var(--accent-weak);
+    border-radius:999px; padding:2px 9px; margin-left:6px; vertical-align:middle;
+  }
+
+  .modal-foot{
+    position:sticky; bottom:0; background:var(--bg); border-top:1px solid var(--line);
+    display:flex; gap:10px; justify-content:flex-end; padding:14px 20px;
+  }
+  .fineprint{ font-size:12px; color:var(--ink-soft); margin:0 20px 6px; }
+
+  /* 送信完了（ダミー） */
+  .done{ text-align:center; padding:34px 24px 30px; }
+  .done .mark{
+    width:52px; height:52px; border-radius:50%; background:var(--accent-weak); color:var(--accent-ink);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:26px;
+  }
+  .done h2{ font-size:17px; margin:0 0 8px; }
+  .done p{ font-size:13.5px; color:var(--ink-soft); margin:0 auto; max-width:34em; }
+  [hidden]{ display:none !important; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="demo-wrap">
+    <p class="demo-note">
+      これは <strong>プロトタイプ（フロント単体）</strong>です。送信ボタンは API 未接続のダミー動作、
+      キャンセル料率は確定値未提供のため「例（要確定）」表記です。マイページ予約詳細の一部を模した枠から、
+      「予約変更リクエスト」でモーダルが開きます。
+    </p>
+
+    <section class="booking-card" aria-label="予約詳細（デモ）">
+      <h1>アルベホール名古屋 ご予約</h1>
+      <p class="num">予約番号：20260420-001</p>
+      <dl class="kv">
+        <dt>利用日</dt><dd>2026年4月20日（月）</dd>
+        <dt>時間</dt><dd>10:00 – 18:00</dd>
+        <dt>イベント名</dt><dd>春の新作ポップアップ</dd>
+        <dt>お支払い</dt><dd>クレジットカード</dd>
+      </dl>
+      <button class="btn btn-primary" id="openBtn" aria-haspopup="dialog">予約変更リクエスト</button>
+    </section>
+  </div>
+
+  <!-- ================= モーダル ================= -->
+  <div class="overlay" id="overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="crTitle" aria-describedby="crDesc" id="modal">
+
+      <!-- フォーム部 -->
+      <div id="formView">
+        <div class="modal-head">
+          <div>
+            <h2 id="crTitle">予約変更リクエスト</h2>
+            <p id="crDesc">変更・キャンセルは内容確認のうえ、担当者の承認後に確定します。</p>
+          </div>
+          <button class="modal-close" id="closeBtn" aria-label="閉じる" type="button">×</button>
+        </div>
+
+        <form class="modal-body" id="crForm" novalidate>
+          <div class="field">
+            <span class="label" id="typeLabel">ご希望の種別<span class="req" aria-hidden="true">必須</span></span>
+            <div class="radios" role="radiogroup" aria-labelledby="typeLabel">
+              <label class="radio"><input type="radio" name="type" value="reschedule" required> 日時変更</label>
+              <label class="radio"><input type="radio" name="type" value="option"> オプション変更</label>
+              <label class="radio"><input type="radio" name="type" value="cancel"> キャンセル</label>
+              <label class="radio"><input type="radio" name="type" value="other"> その他</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="detail">ご希望内容<span class="req" aria-hidden="true">必須</span></label>
+            <textarea id="detail" name="detail" required
+              placeholder="例）4月20日→4月27日（月）へ変更希望。時間は同じ10:00–18:00でお願いします。"></textarea>
+          </div>
+
+          <!-- ポリシー（モーダル内アコーディオン） -->
+          <div class="field">
+            <span class="label">お申し込み前にご確認ください</span>
+            <div class="policies">
+
+              <div class="accordion">
+                <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="pol-cancel" id="tr-cancel">
+                  <span>キャンセルポリシー</span>
+                  <svg class="chev" width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 7l5 6 5-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="accordion-panel" id="pol-cancel" role="region" aria-labelledby="tr-cancel">
+                  <div class="inner">
+                    <div class="inner-pad">
+                      <p>キャンセル料は、ご利用日までの日数に応じて発生します。<span class="tag-example">例（要確定）</span></p>
+                      <table class="policy">
+                        <thead><tr><th>キャンセル時期</th><th>キャンセル料</th></tr></thead>
+                        <tbody>
+                          <tr><td>利用日の8日前まで</td><td>無料</td></tr>
+                          <tr><td>利用日の7〜4日前</td><td>ご利用料金の50%</td></tr>
+                          <tr><td>利用日の3日前〜前日</td><td>ご利用料金の80%</td></tr>
+                          <tr><td>利用当日</td><td>ご利用料金の100%</td></tr>
+                        </tbody>
+                      </table>
+                      <p style="margin-top:8px">※上記は表示例です。実際の料率は確定後に反映されます。オプション料金・残置料金の扱いを含みます。</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion">
+                <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="pol-change" id="tr-change">
+                  <span>変更ポリシー</span>
+                  <svg class="chev" width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 7l5 6 5-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="accordion-panel" id="pol-change" role="region" aria-labelledby="tr-change">
+                  <div class="inner">
+                    <div class="inner-pad">
+                      <ul>
+                        <li>すべての変更・キャンセルは、担当者が内容を確認し <strong>承認した時点で確定</strong> します（自動確定はされません）。</li>
+                        <li>お申し込みは <strong>ご利用日当日まで</strong> 受け付けます。</li>
+                        <li>変更により料金差額が生じる場合：<br>値上がり分は<strong>追加のお支払い</strong>、値下がり分は<strong>返金</strong>となります。</li>
+                        <li>返金方法はお支払い方法により異なります：<br>クレジットカード＝<strong>カードへ返金</strong>／銀行振込・コンビニ払い＝<strong>ご指定口座へお振込</strong>（口座情報を伺います）。</li>
+                        <li>お電話でのご変更・キャンセルのご対応はいたしかねます（お手続きはこのフォームから）。</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </form>
+
+        <p class="fineprint">送信後、受付確認メールをお送りします。承認結果は改めてご連絡します。</p>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" id="cancelBtn">閉じる</button>
+          <button type="submit" class="btn btn-primary" form="crForm" id="submitBtn">リクエストを送信</button>
+        </div>
+      </div>
+
+      <!-- 完了（ダミー） -->
+      <div id="doneView" hidden>
+        <div class="modal-head">
+          <div><h2>送信しました</h2></div>
+          <button class="modal-close" id="closeBtn2" aria-label="閉じる" type="button">×</button>
+        </div>
+        <div class="done">
+          <div class="mark" aria-hidden="true">✓</div>
+          <h2>変更リクエストを受け付けました</h2>
+          <p>担当者が内容を確認のうえ、折り返しご連絡いたします。受付確認メールをお送りしましたのでご確認ください。</p>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-primary" id="doneCloseBtn">閉じる</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var overlay   = document.getElementById('overlay');
+  var modal     = document.getElementById('modal');
+  var openBtn   = document.getElementById('openBtn');
+  var formView  = document.getElementById('formView');
+  var doneView  = document.getElementById('doneView');
+  var form      = document.getElementById('crForm');
+  var lastFocused = null;
+
+  /* ---- アコーディオン ---- */
+  var triggers = Array.prototype.slice.call(document.querySelectorAll('.accordion-trigger'));
+  triggers.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      btn.setAttribute('aria-expanded', String(!expanded));
+      panel.classList.toggle('is-open', !expanded);
+    });
+  });
+
+  /* ---- フォーカストラップ ---- */
+  function focusables(){
+    return Array.prototype.slice.call(
+      modal.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])')
+    ).filter(function(el){ return el.offsetParent !== null && !el.disabled; });
+  }
+  function trap(e){
+    if(e.key !== 'Tab') return;
+    var f = focusables(); if(!f.length) return;
+    var first = f[0], last = f[f.length-1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  }
+
+  /* ---- 開閉 ---- */
+  function openModal(){
+    lastFocused = document.activeElement;
+    overlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    // 常にフォーム表示から開始
+    formView.hidden = false; doneView.hidden = true;
+    var f = focusables(); if(f.length) f[0].focus();
+    document.addEventListener('keydown', onKeydown);
+  }
+  function closeModal(){
+    overlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', onKeydown);
+    if(lastFocused && lastFocused.focus) lastFocused.focus();
+  }
+  function onKeydown(e){
+    if(e.key === 'Escape'){ e.preventDefault(); closeModal(); }
+    else trap(e);
+  }
+
+  openBtn.addEventListener('click', openModal);
+  document.getElementById('closeBtn').addEventListener('click', closeModal);
+  document.getElementById('closeBtn2').addEventListener('click', closeModal);
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  document.getElementById('doneCloseBtn').addEventListener('click', closeModal);
+  overlay.addEventListener('mousedown', function(e){ if(e.target === overlay) closeModal(); });
+
+  /* ---- 送信（ダミー）---- */
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){
+      var typeChosen = form.querySelector('input[name="type"]:checked');
+      if(!typeChosen){ form.querySelector('input[name="type"]').focus(); return; }
+      var detail = document.getElementById('detail');
+      if(!detail.value.trim()){ detail.focus(); return; }
+      return;
+    }
+    // 実際は POST /api/bookings/:id/change-request に送信 → 受付確認メール
+    formView.hidden = true; doneView.hidden = false;
+    document.getElementById('doneCloseBtn').focus();
+  });
+})();
+</script>
+</body>
+</html>

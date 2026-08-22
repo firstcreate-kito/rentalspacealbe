@@ -22,6 +22,7 @@ booking/
 ├── docs/        設計ドキュメント（現状ここまで作成済み）
 ├── api/         Cloudflare Workers + Hono + D1（Phase 1）
 ├── web/         顧客向け埋め込みUI（Phase 2）
+│                 └ change-request-modal.html … 変更リクエストモーダル（アコーディオン）プロトタイプ
 ├── admin/       管理画面 React / Pages（Phase 3）
 └── signage/     デジタルサイネージ / Pages（Phase 3）
 ```
