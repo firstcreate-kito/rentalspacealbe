@@ -496,9 +496,10 @@ ul { list-style: none; padding: 0; }
 .asoffice figcaption b { color: var(--c-ink); }
 
 /* ---- 常設の備品や設備：オプションの見出し ---- */
-.kit-sub {
+.kit-sub, .price-sub {
   font-size: 1.05rem; font-weight: 700;
   margin: 2.2em 0 .9em; padding-top: 1.6em;
   border-top: 1px solid var(--c-line);
 }
+.pricing .price-sub:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
 .kit-list--opt { margin-bottom: 1.4em; }
